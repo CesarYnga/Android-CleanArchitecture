@@ -10,4 +10,9 @@ public class DiskUserDataSource implements UserDataSource {
     public void userEntityList(DataSourceCallback<List<UserEntity>> callback) {
 
     }
+
+    @Override
+    public void userEntityDetails(int userId, DataSourceCallback<UserEntity> callback) {
+
+    }
 }

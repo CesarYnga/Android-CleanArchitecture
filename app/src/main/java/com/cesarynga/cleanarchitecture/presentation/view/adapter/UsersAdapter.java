@@ -18,6 +18,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
     private List<UserModel> userList;
 
+    private OnItemClickListener onItemClickListener;
+
     @Override
     public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -27,7 +29,16 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
     @Override
     public void onBindViewHolder(UserViewHolder holder, int position) {
-        holder.bind(this.userList.get(position));
+        final UserModel userModel = this.userList.get(position);
+        holder.bind(userModel);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onUserItemClick(userModel);
+                }
+            }
+        });
     }
 
     @Override
@@ -38,6 +49,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     public void setUserList(List<UserModel> userList) {
         this.userList = userList;
         notifyDataSetChanged();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
@@ -51,7 +66,11 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         }
 
         public void bind(UserModel userModel) {
-            txtUser.setText(userModel.getId() + " - " + userModel.getUsername());
+            txtUser.setText(userModel.getUsername());
         }
+    }
+
+    public interface OnItemClickListener {
+        void onUserItemClick(UserModel userModel);
     }
 }

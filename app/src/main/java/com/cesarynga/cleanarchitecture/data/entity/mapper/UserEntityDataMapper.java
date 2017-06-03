@@ -13,7 +13,10 @@ public class UserEntityDataMapper {
 
     public User transform(UserEntity userEntity) {
         User user = new User(userEntity.getId());
-        user.setUsername(userEntity.getUsername());
+        user.setName(userEntity.getName());
+        user.setUsername("@" + userEntity.getUsername());
+        user.setEmail(userEntity.getEmail());
+        user.setPhone(userEntity.getPhone());
         return user;
     }
 

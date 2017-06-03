@@ -7,4 +7,6 @@ import java.util.List;
 public interface UserDataSource {
 
     void userEntityList(DataSourceCallback<List<UserEntity>> callback);
+
+    void userEntityDetails(int userId, DataSourceCallback<UserEntity> callback);
 }

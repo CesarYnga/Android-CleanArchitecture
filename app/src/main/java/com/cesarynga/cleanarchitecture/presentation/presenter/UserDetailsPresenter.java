@@ -7,28 +7,26 @@ import com.cesarynga.cleanarchitecture.domain.executor.JobExecutor;
 import com.cesarynga.cleanarchitecture.domain.executor.UIThread;
 import com.cesarynga.cleanarchitecture.domain.model.User;
 import com.cesarynga.cleanarchitecture.domain.repository.UserRepository;
-import com.cesarynga.cleanarchitecture.domain.usecase.GetUserList;
+import com.cesarynga.cleanarchitecture.domain.usecase.GetUser;
 import com.cesarynga.cleanarchitecture.domain.usecase.UseCase;
 import com.cesarynga.cleanarchitecture.presentation.exception.ErrorMessageFactory;
-import com.cesarynga.cleanarchitecture.presentation.model.UserModel;
 import com.cesarynga.cleanarchitecture.presentation.model.UserModelDataMapper;
-import com.cesarynga.cleanarchitecture.presentation.view.UserListView;
+import com.cesarynga.cleanarchitecture.presentation.view.UserDetailsView;
 
 import java.util.List;
 
-public class UserListPresenter extends BasePresenter<UserListView> {
+public class UserDetailsPresenter extends BasePresenter<UserDetailsView> {
 
-    private final GetUserList getUserList;
+    private final GetUser getUser;
     private final UserModelDataMapper userModelDataMapper;
 
-    public UserListPresenter(UserListView view) {
+    public UserDetailsPresenter(UserDetailsView view) {
         super(view);
 
         UserRepository userRepository = new UserDataRepository(
                 new UserDataSourceFactory(view.context()), new UserEntityDataMapper());
-        this.getUserList = new GetUserList(userRepository, new JobExecutor(), new UIThread());
+        this.getUser = new GetUser(userRepository, new JobExecutor(), new UIThread());
         this.userModelDataMapper = new UserModelDataMapper();
-
     }
 
     @Override
@@ -43,12 +41,12 @@ public class UserListPresenter extends BasePresenter<UserListView> {
 
     @Override
     public void destroy() {
-        this.getUserList.cancel();
+        this.getUser.cancel();
         this.view = null;
     }
 
-    private void renderUserListInView(List<User> users) {
-        view.renderUserList(userModelDataMapper.transform(users));
+    private void renderUserInView(User user) {
+        view.renderUser(userModelDataMapper.transform(user));
     }
 
     private void showErrorMessage(Exception e) {
@@ -64,17 +62,14 @@ public class UserListPresenter extends BasePresenter<UserListView> {
         view.hideLoading();
     }
 
-    public void onUserClicked(UserModel userModel) {
-        view.viewUserDetails(userModel);
-    }
-
-    public void getUserList() {
+    public void getUserDetails(int userId) {
         this.showLoadingView();
-        this.getUserList.execute(new UseCase.Callback<List<User>>() {
+        this.getUser.setParams(userId);
+        this.getUser.execute(new UseCase.Callback<User>() {
             @Override
-            public void onSuccess(List<User> users) {
+            public void onSuccess(User user) {
                 hideLoadingView();
-                renderUserListInView(users);
+                renderUserInView(user);
             }
 
             @Override

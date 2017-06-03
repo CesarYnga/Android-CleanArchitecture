@@ -12,7 +12,10 @@ public class UserModelDataMapper {
 
     public UserModel transform(User user) {
         UserModel userModel = new UserModel(user.getId());
+        userModel.setName(user.getName());
         userModel.setUsername(user.getUsername());
+        userModel.setEmail(user.getEmail());
+        userModel.setPhone(user.getPhone());
         return userModel;
     }
 

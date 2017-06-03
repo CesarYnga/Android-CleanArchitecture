@@ -8,4 +8,5 @@ public interface UserListView extends LoadingView {
 
     void renderUserList(List<UserModel> userModelList);
 
+    void viewUserDetails(UserModel userModel);
 }

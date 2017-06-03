@@ -7,4 +7,6 @@ import java.util.List;
 public interface UserRepository {
 
     void users(RepositoryCallback<List<User>> callback);
+
+    void user(int userId, RepositoryCallback<User> callback);
 }

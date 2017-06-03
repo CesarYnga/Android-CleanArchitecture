@@ -21,4 +21,13 @@ public class NetworkUserDataSource implements UserDataSource {
             callback.onError(e);
         }
     }
+
+    @Override
+    public void userEntityDetails(int userId, DataSourceCallback<UserEntity> callback) {
+        try {
+            callback.onSuccess(restApi.getUser(userId));
+        } catch (Exception e) {
+            callback.onError(e);
+        }
+    }
 }

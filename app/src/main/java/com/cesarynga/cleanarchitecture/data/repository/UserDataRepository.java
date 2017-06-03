@@ -37,4 +37,20 @@ public class UserDataRepository implements UserRepository {
             }
         });
     }
+
+    @Override
+    public void user(int userId, final RepositoryCallback<User> callback) {
+        final UserDataSource userDataSource = userDataSourceFactory.create();
+        userDataSource.userEntityDetails(userId, new DataSourceCallback<UserEntity>() {
+            @Override
+            public void onSuccess(UserEntity response) {
+                callback.onSuccess(userEntityDataMapper.transform(response));
+            }
+
+            @Override
+            public void onError(Throwable exception) {
+                callback.onError(exception);
+            }
+        });
+    }
 }

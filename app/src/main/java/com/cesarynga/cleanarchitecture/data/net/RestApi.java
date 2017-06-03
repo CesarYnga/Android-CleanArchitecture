@@ -8,4 +8,6 @@ public interface RestApi {
 
     List<UserEntity> getUserList() throws Exception;
 
+    UserEntity getUser(int userId) throws Exception;
+
 }

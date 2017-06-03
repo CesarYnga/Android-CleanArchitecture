@@ -2,12 +2,12 @@ package com.cesarynga.cleanarchitecture.presentation.view.fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +15,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.cesarynga.cleanarchitecture.R;
-import com.cesarynga.cleanarchitecture.data.entity.mapper.UserEntityDataMapper;
-import com.cesarynga.cleanarchitecture.data.repository.UserDataRepository;
-import com.cesarynga.cleanarchitecture.data.repository.datasource.UserDataSourceFactory;
-import com.cesarynga.cleanarchitecture.domain.executor.JobExecutor;
-import com.cesarynga.cleanarchitecture.domain.executor.UIThread;
-import com.cesarynga.cleanarchitecture.domain.repository.UserRepository;
-import com.cesarynga.cleanarchitecture.domain.usecase.GetUserList;
 import com.cesarynga.cleanarchitecture.presentation.model.UserModel;
-import com.cesarynga.cleanarchitecture.presentation.model.UserModelDataMapper;
 import com.cesarynga.cleanarchitecture.presentation.presenter.UserListPresenter;
 import com.cesarynga.cleanarchitecture.presentation.view.UserListView;
+import com.cesarynga.cleanarchitecture.presentation.view.activity.UserDetailsActivity;
 import com.cesarynga.cleanarchitecture.presentation.view.adapter.UsersAdapter;
 
 import java.util.List;
@@ -34,9 +27,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class UserListFragment extends Fragment implements UserListView {
-
-    private static final String TAG = "UserListFragment";
+public class UserListFragment extends Fragment implements UserListView,
+        UsersAdapter.OnItemClickListener {
 
     private UserListPresenter userListPresenter;
 
@@ -70,6 +62,7 @@ public class UserListFragment extends Fragment implements UserListView {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
         usersAdapter = new UsersAdapter();
+        usersAdapter.setOnItemClickListener(this);
         recyclerView.setAdapter(usersAdapter);
 
         userListPresenter = new UserListPresenter(this);
@@ -83,6 +76,12 @@ public class UserListFragment extends Fragment implements UserListView {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        userListPresenter.destroy();
     }
 
     @Override
@@ -108,5 +107,17 @@ public class UserListFragment extends Fragment implements UserListView {
     @Override
     public void renderUserList(List<UserModel> userModelList) {
         usersAdapter.setUserList(userModelList);
+    }
+
+    @Override
+    public void viewUserDetails(UserModel userModel) {
+        Intent intent = new Intent(getContext(), UserDetailsActivity.class);
+        intent.putExtra(UserDetailsActivity.EXTRA_USER_ID, userModel.getId());
+        startActivity(intent);
+    }
+
+    @Override
+    public void onUserItemClick(UserModel userModel) {
+        userListPresenter.onUserClicked(userModel);
     }
 }
